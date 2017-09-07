@@ -1,6 +1,6 @@
 import { Actions } from 'react-native-router-flux';
 import firebase from 'firebase';
-import { EMPLOYEE_UPDATE } from './types';
+import { EMPLOYEE_UPDATE, EMPLOYEE_CREATE } from './types';
 
 export const employeeUpdate = ({ prop, value }) => {
   return {
@@ -13,9 +13,13 @@ export const employeeCreate = ({ name, phone, shift }) => {
   const { currentUser } = firebase.auth();
 
   //fake out redux thunk to think we are returning an action
-  return () => {
+  return (dispatch) => {
     firebase.database().ref(`/users/${currentUser.uid}/employees`)
       .push({ name, phone, shift })
-      .then(() => Actions.employeeList({ type: 'reset' }));
+      .then(() => {
+        dispatch({ type: EMPLOYEE_CREATE })
+        Actions.employeeList({ type: 'reset' });
+
+      });
   };
 };

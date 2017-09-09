@@ -24,15 +24,9 @@ class EmployeeList extends Component {
   }
 
 renderRow(employee) {
-  console.log('renderRow');
-  console.log(employee);
-  console.log(employee.name);
   return <ListItem employee={employee} />;
 }
   render() {
-    console.log(this.props);
-    console.log('employee');
-    console.log(this.props.employees);
     return (
       <ListView
         enableEmptySections

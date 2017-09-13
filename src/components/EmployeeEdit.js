@@ -3,10 +3,12 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Communications from 'react-native-communications';
 import EmployeeForm from './EmployeeForm';
-import { Card, CardSection, Button } from './common';
-import { employeeUpdate, employeeSave } from '../actions';
+import { Card, CardSection, Button, Confirm } from './common';
+import { employeeUpdate, employeeSave, employeeDelete } from '../actions';
 
 class EmployeeEdit extends Component {
+  state = { showModal: false };
+
   componentWillMount() {
     //prefil reducer with the employee that is in  props...
     _.each(this.props.employee, (value, prop) => {
@@ -24,6 +26,11 @@ class EmployeeEdit extends Component {
     Communications.text(phone, `Your upcoming shift is on ${shift}`);
   }
 
+  onAccept() {
+    const { uid } = this.props.employee;
+    this.props.employeeDelete({ uid });
+  }
+
   render() {
     return (
       <Card>
@@ -39,6 +46,20 @@ class EmployeeEdit extends Component {
             Text Schedule
           </Button>
         </CardSection>
+
+        <CardSection>
+          <Button onPress={() => this.setState({ showModal: true })}>
+            Terminate Employee
+          </Button>
+        </CardSection>
+
+        <Confirm
+          visible={this.state.showModal}
+          onAccept={this.onAccept.bind(this)}
+          onDecline={() => this.setState({ showModal: false })}
+        >
+          Are you sure you want to delete this?
+        </Confirm>
       </Card>
     );
   }
@@ -50,4 +71,4 @@ const mapStateToProps = (state) => {
   return { name, phone, shift };
 };
 
-export default connect(mapStateToProps, { employeeUpdate, employeeSave })(EmployeeEdit);
+export default connect(mapStateToProps, { employeeUpdate, employeeSave, employeeDelete })(EmployeeEdit);
